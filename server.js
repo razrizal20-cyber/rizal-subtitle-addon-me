@@ -1,8 +1,9 @@
 const { addonBuilder, serveHTTP } = require("stremio-addon-sdk");
 
-const getFiles = require("./drive");
-const findSubtitle = require("./matcher");
+const cron = require("node-cron");
 
+const scan = require("./scanner");
+const findSubtitle = require("./matcher");
 
 const builder = new addonBuilder({
 
@@ -12,7 +13,7 @@ const builder = new addonBuilder({
 
     name: "Rizal Ultra Subtitle",
 
-    description: "Malay subtitle addon for Stremio",
+    description: "Malay Subtitle Addon",
 
     resources: [
         "subtitles"
@@ -28,49 +29,80 @@ const builder = new addonBuilder({
 });
 
 
+// Scan sekali bila server hidup
+scan();
+
+
+// Scan setiap 1 minit
+cron.schedule("* * * * *", async () => {
+
+    console.log("Scanning Google Drive...");
+
+    await scan();
+
+});
+
+
 builder.defineSubtitlesHandler(async ({ id, extra }) => {
 
+    let subtitleId;
 
-    const files = await getFiles();
+    // Movie
+    if (!extra || extra.season === undefined) {
 
-
-    const subtitle = findSubtitle(files, id);
-
-
-
-    if (!subtitle) {
-
-        return {
-            subtitles: []
-        };
+        subtitleId = findSubtitle(id);
 
     }
 
+    // Series
+    else {
 
+        subtitleId = findSubtitle(
+
+            id,
+
+            extra.season,
+
+            extra.episode
+
+        );
+
+    }
+
+    if (!subtitleId) {
+
+        return {
+
+            subtitles: []
+
+        };
+
+    }
 
     return {
 
         subtitles: [
 
             {
-                id: "malay",
+
+                id: subtitleId,
+
                 lang: "ms",
+
                 url:
-                `https://drive.google.com/uc?export=download&id=${subtitle}`
+                `https://drive.google.com/uc?export=download&id=${subtitleId}`
+
             }
 
         ]
 
     };
 
-
 });
 
 
+serveHTTP(builder.getInterface(), {
 
-serveHTTP(
-    builder.getInterface(),
-    {
-        port: 10000
-    }
-);
+    port: process.env.PORT || 10000
+
+});

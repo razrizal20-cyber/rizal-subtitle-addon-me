@@ -1,22 +1,30 @@
-function findSubtitle(files, name){
+const fs = require("fs");
 
-    let clean=name.toLowerCase();
+function findSubtitle(id, season, episode) {
 
+    if (!fs.existsSync("cache.json"))
+        return null;
 
-    for(let file of files){
+    const cache = JSON.parse(
+        fs.readFileSync("cache.json")
+    );
 
-        if(file.name.toLowerCase().includes(clean)){
+    // Movie
+    if (season === undefined || episode === undefined) {
 
-            return file.id;
-
-        }
+        return cache[id]?.movie || null;
 
     }
 
+    // Series
+    const key =
+        "S" +
+        String(season).padStart(2, "0") +
+        "E" +
+        String(episode).padStart(2, "0");
 
-    return null;
+    return cache[id]?.[key] || null;
 
 }
 
-
-module.exports=findSubtitle;
+module.exports = findSubtitle;
