@@ -1,0 +1,14 @@
+{
+  "name": "rizal-subtitle-addon",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.0.0",
+    "googleapis": "^140.0.0",
+    "node-cron": "^4.6.0",
+    "stremio-addon-sdk": "^1.6.10"
+  }
+}
