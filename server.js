@@ -44,6 +44,8 @@ cron.schedule("* * * * *", async () => {
 
 
 builder.defineSubtitlesHandler(async ({ id, extra }) => {
+    console.log("REQUEST:");
+    console.log(id, extra);
 
     let subtitleId;
 
