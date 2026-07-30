@@ -9,19 +9,30 @@ const auth = new google.auth.GoogleAuth({
     ]
 });
 
-async function getFiles() {
+async function getDriveData() {
 
     const drive = google.drive({
         version: "v3",
         auth
     });
 
-    const result = await drive.files.list({
-        q: "name contains '.srt'",
-        fields: "files(id,name,parents,mimeType)"
+    // Ambil semua folder
+    const folderResult = await drive.files.list({
+        q: "mimeType='application/vnd.google-apps.folder'",
+        fields: "files(id,name,parents)"
     });
 
-    return result.data.files;
+    // Ambil semua subtitle
+    const subtitleResult = await drive.files.list({
+        q: "name contains '.srt'",
+        fields: "files(id,name,parents)"
+    });
+
+    return {
+        folders: folderResult.data.files || [],
+        subtitles: subtitleResult.data.files || []
+    };
+
 }
 
-module.exports = getFiles;
+module.exports = getDriveData;
