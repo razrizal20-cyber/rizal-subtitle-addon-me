@@ -16,23 +16,29 @@ async function getDriveData() {
         auth
     });
 
-    // Ambil semua folder
-    const folderResult = await drive.files.list({
-        q: "mimeType='application/vnd.google-apps.folder'",
-        fields: "files(id,name,parents)"
+    // Ambil semua fail & folder
+    const result = await drive.files.list({
+        q: "trashed = false",
+        fields: "files(id,name,parents,mimeType)"
     });
 
-    // Ambil semua subtitle
-    const subtitleResult = await drive.files.list({
-        q: "name contains '.srt'",
-        fields: "files(id,name,parents)"
-    });
+    const files = result.data.files || [];
+
+    const folders = files.filter(
+        f => f.mimeType === "application/vnd.google-apps.folder"
+    );
+
+    const subtitles = files.filter(
+        f => f.name.toLowerCase().endsWith(".srt")
+    );
+
+    console.log("Folders:", folders.length);
+    console.log("Subtitles:", subtitles.length);
 
     return {
-        folders: folderResult.data.files || [],
-        subtitles: subtitleResult.data.files || []
+        folders,
+        subtitles
     };
-
 }
 
 module.exports = getDriveData;
