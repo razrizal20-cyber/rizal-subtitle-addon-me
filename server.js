@@ -44,58 +44,51 @@ cron.schedule("* * * * *", async () => {
 
 
 builder.defineSubtitlesHandler(async ({ id, extra }) => {
-    console.log("REQUEST:");
-    console.log(id, extra);
+
+    console.log("========== SUBTITLE REQUEST ==========");
+    console.log("ID:", id);
+    console.log("EXTRA:", extra);
+
 
     let subtitleId;
 
-    // Movie
+
     if (!extra || extra.season === undefined) {
 
         subtitleId = findSubtitle(id);
 
-    }
-
-    // Series
-    else {
+    } else {
 
         subtitleId = findSubtitle(
-
             id,
-
             extra.season,
-
             extra.episode
-
         );
 
     }
 
+
+    console.log("RESULT:", subtitleId);
+
+
     if (!subtitleId) {
 
         return {
-
             subtitles: []
-
         };
 
     }
 
+
     return {
 
         subtitles: [
-
             {
-
                 id: subtitleId,
-
                 lang: "ms",
-
                 url:
                 `https://drive.google.com/uc?export=download&id=${subtitleId}`
-
             }
-
         ]
 
     };
