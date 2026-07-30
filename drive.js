@@ -1,36 +1,27 @@
 const { google } = require("googleapis");
 
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+
 const auth = new google.auth.GoogleAuth({
-    keyFile: "credentials.json",
+    credentials,
     scopes: [
         "https://www.googleapis.com/auth/drive.readonly"
     ]
 });
 
-async function getDriveData() {
+async function getFiles() {
 
     const drive = google.drive({
         version: "v3",
         auth
     });
 
-    // Ambil semua folder
-    const folders = await drive.files.list({
-        q: "mimeType='application/vnd.google-apps.folder'",
-        fields: "files(id,name,parents)"
-    });
-
-    // Ambil semua fail SRT
-    const subtitles = await drive.files.list({
+    const result = await drive.files.list({
         q: "name contains '.srt'",
-        fields: "files(id,name,parents)"
+        fields: "files(id,name,parents,mimeType)"
     });
 
-    return {
-        folders: folders.data.files,
-        subtitles: subtitles.data.files
-    };
-
+    return result.data.files;
 }
 
-module.exports = getDriveData;
+module.exports = getFiles;
