@@ -20,7 +20,17 @@ async function scan() {
 
     const cache = {};
 
-    for (const file of subtitles) {
+    for (const file of subtitles)
+    console.log("--------------------");
+    console.log(file);
+    
+    const folderId = file.parents[0];
+    console.log("Folder ID:", folderId);
+    const imdb = folderMap[folderId];
+    console.log("IMDb:", imdb);
+    
+    console.log("Match:", file.name.match(/S(\d+)E(\d+)/i));
+    {
 
         if (!file.parents || file.parents.length === 0)
             continue;
