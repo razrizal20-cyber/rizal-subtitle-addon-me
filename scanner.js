@@ -4,6 +4,7 @@ const getDriveData = require("./drive");
 async function scan() {
 
     const data = await getDriveData();
+    console.log(data);
 
     const folders = data.folders;
     const subtitles = data.subtitles;
