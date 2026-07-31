@@ -53,19 +53,11 @@ builder.defineSubtitlesHandler(async ({ id, extra }) => {
     let subtitleId;
 
 
-    if (!extra || extra.season === undefined) {
-
-        subtitleId = findSubtitle(id);
-
-    } else {
-
-        subtitleId = findSubtitle(
-            id,
-            extra.season,
-            extra.episode
-        );
-
-    }
+    subtitleId = findSubtitle(
+        id,
+        extra?.season,
+        extra?.episode
+    );
 
 
     console.log("RESULT:", subtitleId);
