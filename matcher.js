@@ -6,14 +6,22 @@ function findSubtitle(id, season, episode) {
         return null;
 
     const cache = JSON.parse(
-        fs.readFileSync("cache.json")
+        fs.readFileSync("cache.json", "utf8")
     );
+
+    // Jika Stremio hantar format tt1234567:1:1
+    if (id.includes(":")) {
+
+        const parts = id.split(":");
+
+        id = parts[0];
+        season = Number(parts[1]);
+        episode = Number(parts[2]);
+    }
 
     // Movie
     if (season === undefined || episode === undefined) {
-
         return cache[id]?.movie || null;
-
     }
 
     // Series
@@ -24,7 +32,6 @@ function findSubtitle(id, season, episode) {
         String(episode).padStart(2, "0");
 
     return cache[id]?.[key] || null;
-
 }
 
 module.exports = findSubtitle;
